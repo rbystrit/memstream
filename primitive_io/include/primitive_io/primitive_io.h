@@ -10,4 +10,7 @@
 #include <primitive_io/primitive_writer.h>
 #include <primitive_io/primitive_reader.h>
 #include <primitive_io/bitpacking_writer.h>
+#include <primitive_io/bitpacking_reader.h>
+#include <primitive_io/bitpacking_writer_impl.h>
+#include <primitive_io/bitpacking_reader_impl.h>
 #endif //MEMUTILS_PRIMITIVE_IO_H
