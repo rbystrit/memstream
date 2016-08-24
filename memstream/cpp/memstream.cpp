@@ -8,6 +8,65 @@
 
 namespace rbystrit {
 namespace memstream {
+
+rawmembuf::rawmembuf(const void *buf, size_t size)
+        : _buf(const_cast<char*>(reinterpret_cast<const char *>(buf))), _size(size) {
+    setg(_buf, _buf, _buf + this->size());
+}
+
+rawmembuf::rawmembuf(const rawmembuf &rhs) : streambuf(), _buf(rhs._buf), _size(rhs._size) {
+    setg(rhs.eback(), rhs.gptr(), rhs.egptr());
+}
+
+rawmembuf::rawmembuf(rawmembuf &&rhs) : streambuf(), _buf(rhs._buf), _size(rhs._size) {
+    setg(rhs.eback(), rhs.gptr(), rhs.egptr());
+}
+
+rawmembuf &rawmembuf::operator=(const rawmembuf &rhs) {
+    _buf = rhs._buf;
+    _size = rhs._size;
+    setg(rhs.eback(), rhs.gptr(), rhs.egptr());
+}
+
+rawmembuf &rawmembuf::operator=(rawmembuf &&rhs) {
+    _buf = rhs._buf;
+    _size = rhs._size;
+    setg(rhs.eback(), rhs.gptr(), rhs.egptr());
+}
+
+streampos rawmembuf::seekoff(streamoff off, ios_base::seekdir way,
+                          ios_base::openmode which) {
+    streampos sp = gptr() - eback();
+    if (way == ios_base::seekdir::_S_cur)
+        sp = sp + off;
+    else if (way == ios_base::seekdir::_S_beg)
+        sp = off;
+    else if (way == ios_base::seekdir::_S_end)
+        sp = _size - off;
+
+    return seekpos(sp, which);
+}
+
+streampos rawmembuf::seekpos(streampos sp, ios_base::openmode which) {
+    if (sp < 0 || sp > _size)
+        return -1;
+    setg(_buf, _buf + static_cast<size_t >(sp), _buf + _size);
+}
+
+streamsize rawmembuf::xsgetn(char *s, streamsize n) {
+    n = min(n, (streamsize )(egptr() - gptr()));
+
+    if (n == 0)
+        return n;
+
+    memcpy(s, gptr(), static_cast<size_t>(n));
+    seekoff(n, ios_base::seekdir::_S_cur);
+}
+
+streamsize rawmembuf::showmanyc() {
+    return egptr() - gptr();
+}
+
 membuf::membuf(shared_ptr<PageAllocator> allocator)
         : streambuf(),
           _allocator(allocator), _page_size(allocator->page_size()), _pages(new vector<uint8_t *>()), _position(0),
@@ -124,6 +183,7 @@ void membuf::update_pointers() {
          reinterpret_cast<char *>(_pages->at(_current_page) + _position - _current_page_start));
 
 }
+
 streamsize membuf::xsputn(const char *s, streamsize n) {
     if (n == 0)
         return n;
@@ -261,12 +321,13 @@ int membuf::pbackfail(int c) {
 }
 
 size_t membuf::read_from(istream &is, size_t count) {
-    size_t i =0;
-    while(i < count && !is.eof()){
-        size_t to_read = min(count,_page_size - (static_cast<size_t>(_position) - _current_page_start));
-        is.read(reinterpret_cast<char*>(_pages->at(_current_page) + (static_cast<size_t>(_position) - _current_page_start)), to_read);
+    size_t i = 0;
+    while (i < count && !is.eof()) {
+        size_t to_read = min(count, _page_size - (static_cast<size_t>(_position) - _current_page_start));
+        is.read(reinterpret_cast<char *>(_pages->at(_current_page) +
+                                         (static_cast<size_t>(_position) - _current_page_start)), to_read);
 
-        size_t  bytes_read = static_cast<size_t>(is.gcount());
+        size_t bytes_read = static_cast<size_t>(is.gcount());
 
         i += bytes_read;
         _posmax = max(static_cast<size_t>(_posmax), static_cast<size_t>(_position) + bytes_read);
@@ -279,9 +340,10 @@ size_t membuf::read_from(istream &is, size_t count) {
 size_t membuf::write_to(ostream &os, size_t count) {
     size_t i = 0;
     count = min(count, static_cast<size_t>(_posmax - _position));
-    while(i < count && !os.fail()){
-        size_t to_write = min(count,_page_size - (static_cast<size_t>(_position) - _current_page_start));
-        os.write(reinterpret_cast<char*>(_pages->at(_current_page) + (static_cast<size_t>(_position) - _current_page_start)), to_write);
+    while (i < count && !os.fail()) {
+        size_t to_write = min(count, _page_size - (static_cast<size_t>(_position) - _current_page_start));
+        os.write(reinterpret_cast<char *>(_pages->at(_current_page) +
+                                          (static_cast<size_t>(_position) - _current_page_start)), to_write);
         i += to_write;
         seekpos(static_cast<size_t>(_position) + to_write);
     }

@@ -71,6 +71,27 @@ private:
     void update_pointers();
 };
 
+class rawmembuf : public std::streambuf{
+public:
+    rawmembuf(const void *buf, size_t size);
+    rawmembuf(const rawmembuf &rhs);
+    rawmembuf(rawmembuf &&rhs);
+    rawmembuf &operator=(const rawmembuf &rhs);
+    rawmembuf &operator=(rawmembuf &&rhs);
+    ~rawmembuf() {}
+    const char* buf() const { return _buf; }
+    size_t size() const { return _size;}
+protected:
+    virtual streampos seekoff(streamoff off, ios_base::seekdir way,
+                              ios_base::openmode which = ios_base::in | ios_base::out) override;
+    virtual streampos seekpos(streampos sp, ios_base::openmode which = ios_base::in | ios_base::out) override;
+    virtual streamsize xsgetn(char *s, streamsize n) override;
+    virtual streamsize showmanyc() override;
+private:
+    char* _buf;
+    size_t _size;
+};
+
 class memstream : public iostream{
 private:
     membuf* buffer;
@@ -89,6 +110,19 @@ public:
 
     size_t read_form(istream& is, size_t count) { return buffer->read_from(is,count);}
     size_t write_to(ostream& os, size_t count) { return buffer->write_to(os, count);}
+};
+
+class memistream : public istream {
+private:
+    rawmembuf* buffer;
+public:
+    memistream(const void *buffer, size_t size) : istream(new rawmembuf(buffer, size)) {
+        this->buffer = static_cast<rawmembuf*>(rdbuf());
+    }
+
+    ~memistream() {
+        delete buffer;
+    }
 };
 }
 }

@@ -26,6 +26,9 @@ CPPUNIT_TEST_SUITE(MembufTest);
         CPPUNIT_TEST(test_memstream);
         CPPUNIT_TEST(test_get_content_copy);
         CPPUNIT_TEST(test_read_write_round_trip);
+        CPPUNIT_TEST(test_raw_membuf_get);
+        CPPUNIT_TEST(test_raw_membuf_read);
+        CPPUNIT_TEST(test_raw_membuf_seek);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -237,6 +240,48 @@ public:
         memstream ms3(allocator);
         CPPUNIT_ASSERT_EQUAL(21UL, ms2.write_to(ms3,21));
         CPPUNIT_ASSERT_EQUAL(0, strncmp(ms1.get_content_copy(), ms3.get_content_copy(), 20));
+
+    }
+
+    void test_raw_membuf_get() {
+        const char *str = "abcdefg";
+        memistream is(str, strlen(str)+1);
+
+        CPPUNIT_ASSERT_EQUAL((int)'a', is.get());
+        CPPUNIT_ASSERT_EQUAL((int)'b', is.get());
+        CPPUNIT_ASSERT_EQUAL((int)'c', is.get());
+        CPPUNIT_ASSERT_EQUAL((int)'d', is.get());
+        CPPUNIT_ASSERT_EQUAL((int)'e', is.get());
+        CPPUNIT_ASSERT_EQUAL((int)'f', is.get());
+        CPPUNIT_ASSERT_EQUAL((int)'g', is.get());
+        CPPUNIT_ASSERT_EQUAL(0, is.get());
+    }
+
+    void test_raw_membuf_read() {
+        const char *str = "abcdefg";
+        char str2[8];
+        memistream is(str, strlen(str)+1);
+        is.read(str2, 8);
+        CPPUNIT_ASSERT_EQUAL(0, strncmp(str2, str, 7));
+    }
+
+    void test_raw_membuf_seek() {
+        const char *str = "abcdefg";
+        char str2[8];
+        memistream is(str, strlen(str)+1);
+        is.seekg(2, ios_base::seekdir::_S_end);
+        is.read(str2, 8);
+        CPPUNIT_ASSERT_EQUAL(0, strncmp(str2, "g", 7));
+
+        is.clear();
+        is.seekg(-3, ios_base::seekdir::_S_cur);
+        is.read(str2, 8);
+        CPPUNIT_ASSERT_EQUAL(0, strncmp(str2, "fg", 7));
+
+        is.clear();
+        is.seekg(0, ios_base::seekdir::_S_beg);
+        is.read(str2, 8);
+        CPPUNIT_ASSERT_EQUAL(0, strncmp(str2, str, 7));
 
     }
 };
