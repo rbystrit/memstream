@@ -6,7 +6,7 @@ include_directories(include/)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fPIC")
 set(TEST_FILES test/main.cpp test/allocator_test.h test/membuf_test.h)
-set(SOURCE_FILES include/memstream/allocator.h cpp/allocator.cpp include/memstream.h include/memstream/memstream.h cpp/memstream.cpp)
+set(SOURCE_FILES include/memstream/allocator.h cpp/allocator.cpp include/memstream/memstream.h include/memstream/api.h cpp/memstream.cpp)
 
 add_library(memstream SHARED ${SOURCE_FILES})
 add_executable(memstream_test ${TEST_FILES})

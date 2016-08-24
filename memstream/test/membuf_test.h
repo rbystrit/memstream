@@ -5,7 +5,7 @@
 #ifndef MEMSTREAM_MEMBUF_TEST_H
 #define MEMSTREAM_MEMBUF_TEST_H
 
-#include <memstream.h>
+#include <memstream/api.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <cstring>
 
@@ -25,6 +25,7 @@ CPPUNIT_TEST_SUITE(MembufTest);
         CPPUNIT_TEST(test_snc);
         CPPUNIT_TEST(test_memstream);
         CPPUNIT_TEST(test_get_content_copy);
+        CPPUNIT_TEST(test_read_write_round_trip);
     CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -220,6 +221,23 @@ public:
         delete[] contents;
 
         CPPUNIT_ASSERT_EQUAL(0, r);
+    }
+
+    void test_read_write_round_trip() {
+        shared_ptr<PageAllocator> allocator = make_shared<PageAllocator>(PageAllocator(3, 6));
+        memstream ms1(allocator);
+        ms1.write("01234567890123456789", 21);
+        ms1.seekg(0);
+
+        memstream ms2(allocator);
+        CPPUNIT_ASSERT_EQUAL(21UL, ms2.read_form(ms1,21));
+        CPPUNIT_ASSERT_EQUAL(0, strncmp(ms1.get_content_copy(), ms2.get_content_copy(), 20));
+
+        ms2.seekg(0);
+        memstream ms3(allocator);
+        CPPUNIT_ASSERT_EQUAL(21UL, ms2.write_to(ms3,21));
+        CPPUNIT_ASSERT_EQUAL(0, strncmp(ms1.get_content_copy(), ms3.get_content_copy(), 20));
+
     }
 };
 }

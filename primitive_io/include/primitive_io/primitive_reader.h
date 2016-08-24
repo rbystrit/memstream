@@ -2,8 +2,8 @@
 // Created by rbyst on 8/14/2016.
 //
 
-#ifndef MEMUTILS_PRIMITIVE_READER_H
-#define MEMUTILS_PRIMITIVE_READER_H
+#ifndef PRIMITIVE_IO_PRIMITIVE_IO__READER_H
+#define PRIMITIVE_IO_PRIMITIVE_IO__READER_H
 
 #include <memory>
 #include <istream>

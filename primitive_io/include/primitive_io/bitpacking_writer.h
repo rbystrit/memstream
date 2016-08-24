@@ -5,8 +5,8 @@
 // Created by rbyst on 8/14/2016.
 //
 
-#ifndef MEMUTILS_BITPACKING_WRITER_H
-#define MEMUTILS_BITPACKING_WRITER_H
+#ifndef PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_WRITER_H
+#define PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_WRITER_H
 
 #include <primitive_io/primitive_writer_base.h>
 #include <cstring>

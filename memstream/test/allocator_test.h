@@ -5,7 +5,7 @@
 #ifndef MEMSTREAM_ALLOCATOR_TEST_H
 #define MEMSTREAM_ALLOCATOR_TEST_H
 
-#include <memstream.h>
+#include <memstream/api.h>
 #include <cppunit/extensions/HelperMacros.h>
 #include <cstring>
 #include <iostream>

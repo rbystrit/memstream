@@ -2,7 +2,7 @@
 // Created by rbyst on 8/13/2016.
 //
 
-#include <memstream.h>
+#include <memstream/api.h>
 #include <cstring>
 #include <fstream>
 
@@ -260,5 +260,33 @@ int membuf::pbackfail(int c) {
     return traits_type::to_int_type(_pages->at(_current_page)[static_cast<size_t>(_position) - _current_page_start]);
 }
 
+size_t membuf::read_from(istream &is, size_t count) {
+    size_t i =0;
+    while(i < count && !is.eof()){
+        size_t to_read = min(count,_page_size - (static_cast<size_t>(_position) - _current_page_start));
+        is.read(reinterpret_cast<char*>(_pages->at(_current_page) + (static_cast<size_t>(_position) - _current_page_start)), to_read);
+
+        size_t  bytes_read = static_cast<size_t>(is.gcount());
+
+        i += bytes_read;
+        _posmax = max(static_cast<size_t>(_posmax), static_cast<size_t>(_position) + bytes_read);
+        seekpos(static_cast<size_t>(_position) + bytes_read);
+    }
+
+    return i;
+}
+
+size_t membuf::write_to(ostream &os, size_t count) {
+    size_t i = 0;
+    count = min(count, static_cast<size_t>(_posmax - _position));
+    while(i < count && !os.fail()){
+        size_t to_write = min(count,_page_size - (static_cast<size_t>(_position) - _current_page_start));
+        os.write(reinterpret_cast<char*>(_pages->at(_current_page) + (static_cast<size_t>(_position) - _current_page_start)), to_write);
+        i += to_write;
+        seekpos(static_cast<size_t>(_position) + to_write);
+    }
+
+    return i;
+}
 }
 }

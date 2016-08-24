@@ -2,8 +2,8 @@
 // Created by rbyst on 8/14/2016.
 //
 
-#ifndef MEMUTILS_PRIMITIVE_WRITER_BASE_H
-#define MEMUTILS_PRIMITIVE_WRITER_BASE_H
+#ifndef PRIMITIVE_IO_PRIMITIVE_IO_PRIMITIVE_WRITER_BASE_H
+#define PRIMITIVE_IO_PRIMITIVE_IO_PRIMITIVE_WRITER_BASE_H
 #include <ostream>
 #include <sstream>
 #include <memory>

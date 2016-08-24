@@ -11,8 +11,8 @@ def writer_header_prologue(f):
 // Created by rbyst on 8/14/2016.
 //
 
-#ifndef PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_WRITER_H
-#define PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_WRITER_H
+#ifndef PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_WRITER_IMPL_H
+#define PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_WRITER_IMPL_H
 
 #include <primitive_io/bitpacking_writer.h>
 #include <cstring>
@@ -38,8 +38,8 @@ def reader_header_prologue(f):
 // Created by rbyst on 8/14/2016.
 //
 
-#ifndef PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_READER_H
-#define PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_READER_H
+#ifndef PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_READER_IMPL_H
+#define PRIMITIVE_IO_PRIMITIVE_IO_BITPACKING_READER_IMPL_H
 
 #include <primitive_io/bitpacking_reader.h>
 #include <cstring>

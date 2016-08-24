@@ -38,6 +38,9 @@ public:
         return output;
     }
 
+    size_t read_from(istream& is, size_t count);
+    size_t write_to(ostream& os, size_t count);
+
 protected:
     virtual streampos seekoff(streamoff off, ios_base::seekdir way,
                               ios_base::openmode which = ios_base::in | ios_base::out) override;
@@ -83,6 +86,9 @@ public:
     char*   get_content_copy(){
         return buffer->get_content_copy();
     }
+
+    size_t read_form(istream& is, size_t count) { return buffer->read_from(is,count);}
+    size_t write_to(ostream& os, size_t count) { return buffer->write_to(os, count);}
 };
 }
 }

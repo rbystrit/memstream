@@ -2,8 +2,8 @@
 // Created by rbyst on 8/14/2016.
 //
 
-#ifndef MEMUTILS_PRIMITIVE_IO_H
-#define MEMUTILS_PRIMITIVE_IO_H
+#ifndef PRIMITIVE_IO_PRIMITIVE_IO__PRIMITIVE_IO_H
+#define PRIMITIVE_IO_PRIMITIVE_IO__PRIMITIVE_IO_H
 
 #include <primitive_io/primitive_reader_base.h>
 #include <primitive_io/primitive_writer_base.h>
